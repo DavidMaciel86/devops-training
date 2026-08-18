@@ -1,0 +1,23 @@
+# Nome do workflow que aparecerá nas execuções do GitHub Actions
+name: CI Continuous Integration
+
+# Define quando o workflow será executado
+on:
+  pull_request:              # Aciona o workflow em pull requests
+    branches:
+      - main                 # Limita a execução apenas para a branch 'main'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest   # Define o ambiente de execução (máquina virtual Ubuntu)
+
+    steps:
+      # Etapa 1: Faz o checkout do código do repositório
+      - name: Check out repository code
+        uses: actions/checkout@v6
+
+      # Etapa 2: Executa a ação de lint para verificar a qualidade do código Python
+      - name: Python Lint Code Scanning Action
+        uses: advanced-security/python-lint-code-scanning-action@v1.1.3
+        with:
+          linter: pylint     # Define o linter que será usado (pylint)
