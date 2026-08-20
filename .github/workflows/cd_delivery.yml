@@ -21,3 +21,14 @@ jobs:
               path: |
                 **/*.py
                 README.md
+
+  deploy:
+    runs-on: ubunto-latest
+    needs: deliver  # Configura a necessidade do deliver antes de executar o deploy
+    steps:
+      - name: Simulando Deployment
+        uses: actions/download-artifact@v8
+        with:
+          name: projetozipado
+      - name: Display structure of downloaded files
+        run: ls -R
