@@ -23,7 +23,7 @@ jobs:
                 README.md
 
   deploy:
-    runs-on: ubunto-latest
+    runs-on: ubuntu-latest
     needs: deliver  # Configura a necessidade do deliver antes de executar o deploy
     steps:
       - name: Simulando Deployment
