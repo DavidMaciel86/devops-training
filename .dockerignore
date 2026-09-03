@@ -1,0 +1,24 @@
+# Exclui arquivos de controle de versão e configurações do GitHub
+.git
+.github
+
+# Exclui ambientes virtuais locais do Python
+.venv
+venv
+
+# Exclui arquivos de cache e bytecode gerados automaticamente pelo Python
+__pycache__
+*.py[cod]
+
+# Exclui configurações locais do PyCharm
+.idea
+
+# Exclui arquivos de variáveis de ambiente
+.env
+.env.*
+
+# Exclui arquivos de log gerados durante a execução
+*.log
+
+# Exclui arquivos temporários criados pelo sistema operacional
+Thumbs.db
