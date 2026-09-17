@@ -1,0 +1,16 @@
+# Git e IDE
+.git
+.github
+.idea
+
+# Ambientes e cache
+.venv
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Arquivos temporários e locais
+.env
+*.log
+.DS_Store
