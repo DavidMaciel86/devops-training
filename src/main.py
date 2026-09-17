@@ -1,3 +1,5 @@
+"""API FastAPI utilizada para treinamento de rotas e testes automatizados."""
+
 # FastAPI é a classe principal do framework.
 # app = FastAPI() cria a instância da aplicação.
 # @app.get("/") registra uma rota HTTP do tipo GET no caminho raiz "/".
@@ -15,6 +17,8 @@ app = FastAPI()
 
 
 class Estudante(BaseModel):
+    """Representa os dados de um estudante."""
+
     nome: str
     curso: str
     ativo: bool
