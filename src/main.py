@@ -8,14 +8,14 @@
 
 import random
 from fastapi import FastAPI
-from pydentic import BaseModel
+from pydantic import BaseModel
 
 
 app = FastAPI()
 
 
 class Estudante(BaseModel):
-    name: str
+    nome: str
     curso: str
     ativo: bool
 
@@ -26,20 +26,23 @@ async def root():
 
 
 @app.get("/funcao_test")
-async def nova_rota():
-    return {"test": True, "nume_aleatorio": random.randint(0, 57000)}
+async def new_rout():
+    return {
+        "test": True,
+        "nume_aleatorio": random.randint(0, 57000)
+    }
 
 
 @app.post("/estudantes/cadastro")
-async def create_estudante(estudante: Estudante):
-    return  estudante
+async def create_estudant(estudante: Estudante):
+    return estudante
 
 
 @app.put("/estudantes/update/{id_estudante}")
-async def update_estudante(id_estudante: int):
+async def update_estudant(id_estudante: int):
     return id_estudante > 0
 
 
-@app.delete("/estudantes/delete/{id_estudante})
-async def delete_estudante(estudante: int):
+@app.delete("/estudantes/delete/{id_estudante}")
+async def delete_estudant(id_estudante: int):
     return id_estudante > 0
