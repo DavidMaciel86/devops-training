@@ -3,42 +3,73 @@ name: CI Continuous Integration
 
 # Define quando o workflow será executado
 on:
-  pull_request:              # Aciona o workflow em pull requests
+  pull_request:
     branches:
-      - main                 # Limita a execução apenas para a branch 'main'
+      - main
+
+# Por padrão, nenhum job recebe permissões do GITHUB_TOKEN.
+# Cada job recebe somente o que realmente precisa.
+permissions: {}
 
 jobs:
+
+  # =========================================================
+  # QUALIDADE DE CÓDIGO - PYLINT
+  # =========================================================
   build:
-    runs-on: ubuntu-latest   # Define o ambiente de execução (máquina virtual Ubuntu)
+    name: Code Quality - Pylint
+    runs-on: ubuntu-latest
+
+    # Princípio do menor privilégio:
+    # - lê o repositório
+    # - consulta informações das Actions
+    # - publica resultados no Code Scanning
+    permissions:
+      contents: read
+      actions: read
+      security-events: write
 
     steps:
-      # Etapa 1: Faz o checkout do código do repositório
+      # Faz o checkout do código do repositório
       - name: Check out repository code
         uses: actions/checkout@v6
 
-      # Etapa 2: Executa a ação de lint para verificar a qualidade do código Python
+      # Executa análise de qualidade do código Python
       - name: Python Lint Code Scanning Action
         uses: advanced-security/python-lint-code-scanning-action@v1.1.3
         with:
-          linter: pylint     # Define o linter que será usado (pylint)
+          linter: pylint
 
+
+  # =========================================================
+  # TESTES AUTOMATIZADOS E COBERTURA
+  # =========================================================
   testes:
+    name: Testes e Cobertura
     runs-on: ubuntu-latest
 
+    # Este job precisa apenas ler o conteúdo do repositório
+    permissions:
+      contents: read
+
     steps:
+      # Faz o checkout do código
       - name: Checkout do código
         uses: actions/checkout@v6
 
+      # Configura o Python no runner
       - name: Configurar Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
+      # Instala as dependências de desenvolvimento e testes
       - name: Instalar dependências
         run: |
           python -m pip install --upgrade pip
           python -m pip install -r requirements-dev.txt
 
+      # Executa testes automatizados e mede a cobertura
       - name: Executar testes
         run: |
           # Executa os testes com pytest e exibe cada teste individualmente
@@ -52,3 +83,40 @@ jobs:
             --cov-report=term-missing \
             --cov-report=xml \
             --cov-report=html
+
+
+  # =========================================================
+  # ALERTA DISCORD
+  # =========================================================
+  discord-alert:
+    name: Notificar no Discord
+    runs-on: ubuntu-latest
+
+    # Aguarda os jobs de lint e testes terminarem
+    needs:
+      - build
+      - testes
+
+    # Executa mesmo se algum dos jobs anteriores falhar
+    if: ${{ always() }}
+
+    # O envio ao Discord usa apenas o Secret DISCORD_WEBHOOK.
+    # Nenhuma permissão do GITHUB_TOKEN é necessária.
+    permissions: {}
+
+    steps:
+      # Envia mensagem somente se lint e testes forem bem-sucedidos
+      - name: Aviso CI bem-sucedida
+        if: ${{ needs.build.result == 'success' && needs.testes.result == 'success' }}
+        uses: tsickert/discord-webhook@v7.0.0
+        with:
+          webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
+          content: "✅ CI do devops-training concluída com sucesso!"
+
+      # Envia mensagem caso algum dos jobs não termine com sucesso
+      - name: Aviso CI malsucedida
+        if: ${{ needs.build.result != 'success' || needs.testes.result != 'success' }}
+        uses: tsickert/discord-webhook@v7.0.0
+        with:
+          webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
+          content: "❌ A CI do devops-training apresentou falha!"
