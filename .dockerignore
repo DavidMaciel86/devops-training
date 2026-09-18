@@ -22,3 +22,9 @@ __pycache__
 
 # Exclui arquivos temporários criados pelo sistema operacional
 Thumbs.db
+
+# Relatórios de testes e cobertura
+.coverage
+coverage.xml
+htmlcov/
+junit/

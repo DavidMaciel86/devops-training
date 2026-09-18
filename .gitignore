@@ -217,3 +217,9 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Relatórios de testes e cobertura
+.coverage
+coverage.xml
+htmlcov/
+junit/
